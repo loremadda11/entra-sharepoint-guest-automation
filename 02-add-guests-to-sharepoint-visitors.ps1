@@ -9,6 +9,9 @@ $CsvPath = ".\sample-guests.csv"
 # SharePoint site URL (no trailing /SitePages/...)
 $SiteUrl = "https://contoso.sharepoint.com/sites/ProjectSite"
 
+# Entra ID app registration used by PnP PowerShell interactive authentication
+$ClientId = "<YOUR-APP-CLIENT-ID>"
+
 # Name of the SharePoint group with read permission
 $ReadGroupName = "Visitors of ProjectSite"
 
@@ -24,13 +27,17 @@ if (-not (Test-Path $CsvPath)) {
     throw "CSV file not found: $CsvPath"
 }
 
+if ($ClientId -eq "<YOUR-APP-CLIENT-ID>" -or [string]::IsNullOrWhiteSpace($ClientId)) {
+    throw "Configure `$ClientId with the application (client) ID of an Entra ID app registration before running this script."
+}
+
 if (-not (Get-Module -ListAvailable PnP.PowerShell)) {
     Install-Module PnP.PowerShell -Scope CurrentUser -Force
 }
 
 Import-Module PnP.PowerShell
 
-Connect-PnPOnline -Url $SiteUrl -Interactive
+Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 
 $group = Get-PnPGroup -Identity $ReadGroupName -ErrorAction Stop
 

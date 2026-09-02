@@ -1,0 +1,6 @@
+# Generated execution reports
+result-*.csv
+
+# Real/local input files
+*.local.csv
+guests.csv
